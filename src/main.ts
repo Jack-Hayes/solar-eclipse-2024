@@ -12,6 +12,7 @@ import GeolocationButton from "./GeolocationButton.vue";
 import HoverTooltip from "./HoverTooltip.vue";
 import CloudCover from "./CloudCover.vue";
 import DefineTerm from "./DefineTerm.vue";
+import PlaybackControl from "./PlaybackControl.vue";
 
 import "./polyfills";
 
@@ -56,7 +57,10 @@ import {
   faRotate,
   faCircleChevronDown,
   faStreetView,
-  faCloudSun
+  faCloudSun,
+  faGaugeHigh,
+  faAnglesLeft,
+  faAnglesRight,
 
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -86,6 +90,9 @@ library.add(faRotate);
 library.add(faCircleChevronDown);
 library.add(faStreetView);
 library.add(faCloudSun);
+library.add(faGaugeHigh);
+library.add(faAnglesLeft);
+library.add(faAnglesRight);
 
 /** v-hide directive taken from https://www.ryansouthgate.com/2020/01/30/vue-js-v-hide-element-whilst-keeping-occupied-space/ */
 // Extract the function out, up here, so I'm not writing it twice
@@ -135,6 +142,6 @@ createApp(SolarEclipse2023, {
   .component('hover-tooltip', HoverTooltip)
   .component('cloud-cover', CloudCover)
   .component('define-term', DefineTerm)
-
+  .component('playback-control', PlaybackControl)
   // Mount
   .mount("#app");

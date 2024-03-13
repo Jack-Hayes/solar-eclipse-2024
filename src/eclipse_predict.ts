@@ -118,21 +118,6 @@ const obsvconst: any[] = [];
 //      (0 = above horizon, 1 = below horizon, 2 = sunrise, 3 = sunset, 4 = below horizon, disregard)
 //
 
-const month = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-] as const;
-
 const c1: number[] = [];
 const c2: number[] = [];
 const mid: number[] = [];
@@ -717,7 +702,6 @@ function getTimezone() {
 function setObserver(latDeg: number, lonDeg: number, altm: number, tz: number) {
   consoleDebug("setObserver");
   const observer = new Observer(latDeg, lonDeg, altm, tz);
-  console.log(observer);
   observer.getObserverConstants().forEach((value, index) => {
     obsvconst[index] = value;
   });
@@ -800,7 +784,10 @@ function getdate(elements: number[], circumstances: any[]) {
   } else {
     ans = c - 4715 + "-";
   }
-  ans += month[e - 1] + "-";
+  if (e < 10) {
+    ans += "0";
+  }
+  ans += e + "-";
   if (d < 10) {
     ans = ans + "0";
   }
@@ -1122,7 +1109,6 @@ function calculatefor(el: number[]) {
 function recalculate() {
   readform();
   const result = calculatefor(SE2024());
-  console.log(result);
 }
 
 const DEBUG = false;
@@ -1144,7 +1130,6 @@ export function recalculateForObserver(latDeg: number, latDir: 'N' | 'S', lonDeg
   const tzSign = eclipseform.tzx.options[tzDir];
   setObserver(latSign * Math.abs(latDeg), lonSign * Math.abs(lonDeg), alt, tzSign * Math.abs(tz));
   const result = calculatefor(SE2024());
-  console.log(result);
   return result;
 }
 
@@ -1160,8 +1145,8 @@ function dateAndtTimeToDate(date: string | null, time: string | null) {
   }
   const [year, month, day] = date.split('-');
   const [hour, minute, second] = time.split(':');
-  const timestring = `${year} ${month} ${day} ${hour}:${minute}:${second} UTC`;
-  return new Date(Date.parse(timestring));
+  const timestring = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+  return new Date(timestring);
   
 }
 
@@ -1169,7 +1154,7 @@ function dateAndtTimeToDate(date: string | null, time: string | null) {
 function convertEclipseData(value: EclipseData<string>): EclipseData<Date> {
   // make the type broader so we can reassign some values
   const out = {...value} as EclipseData<Date | string>;
-  
+
   out.partialStart[0] = dateAndtTimeToDate(value.date, value.partialStart[0]);
   out.centralStart[0] = dateAndtTimeToDate(value.date, value.centralStart[0]);
   out.maxTime[0] = dateAndtTimeToDate(value.date, value.maxTime[0]);
@@ -1195,6 +1180,5 @@ export function recalculateForObserverUTC(latDeg: number, lonDeg: number, alt: n
   // use UTC timezone and correct longitude for the the West positive convention used in the code
   setObserver(latDeg, -lonDeg, alt, 0);
   const result = calculatefor(SE2024());
-  console.log(result);
   return convertEclipseDataList(result) as EclipseData<Date>[];
 }

@@ -16,7 +16,7 @@
     "tz-lookup": "^6.1.0",
     "uuid": "^9.0.1",
     "vue": "^3.4.15",
-    "vue-slider-component": "next",
+    "vue-slider-component": "^4.1.0-beta.7",
     "vuetify": "^3.4.11",
     "webpack-plugin-vuetify": "^2.0.1"
   },
@@ -24,7 +24,7 @@
     "build": "./patch.sh; vue-cli-service build",
     "clean": "rimraf dist",
     "lint": "vue-cli-service lint src --no-fix",
-    "serve": "vue-cli-service serve"
+    "serve": "./patch.sh; vue-cli-service serve"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.0",

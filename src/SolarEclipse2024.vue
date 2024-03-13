@@ -136,8 +136,8 @@
               <span class="description">
                 <div class=".d-flex">
                   <div>
-                    This map shows historical cloud cover data on April 8 for the years 2001&#8211;2023 from the <a href="https://modis.gsfc.nasa.gov/" target="_blank" rel="noopener noreferrer">NASA MODIS</a> Aqua satellite.
-                    {{ touchscreen ? "Tap" : "Click" }} the map to display the <define-term term="median" definition="For <strong>half</strong> of the years from 2001&#8211;2003 on April 8, the cloud cover amount was <strong>less</strong> than the median value. For the other <strong>half</strong> of the years, the cloud cover was <strong>more</strong> than the median value."/> cloud coverage for a particular location (within about 100 km).
+                    This map shows historical cloud cover data for the week of April 8 for the years 2003&#8211;2023 from the <a href="https://modis.gsfc.nasa.gov/" target="_blank" rel="noopener noreferrer">NASA MODIS</a> Aqua satellite.
+                    {{ touchscreen ? "Tap" : "Click" }} the map to display the <define-term term="median" definition="For <strong>half</strong> of the years from 2003–2023 on April 8, the cloud cover amount was <strong>less</strong> than the median value. For the other <strong>half</strong> of the years, the cloud cover was <strong>more</strong> than the median value."/> cloud coverage for a particular location (within about 100 km).
                   </div>
                   <div>
                     <cloud-cover
@@ -220,7 +220,6 @@
             <location-selector
               :model-value="locationDeg"
               @update:modelValue="updateLocationFromMap"
-              :initial-place="places.find(p => p.name === 'selectedLocation')"
               :place-circle-options="placeCircleOptions"
               :detect-location="false"
               :map-options="(learnerPath === 'Clouds') ? userSelectedMapOptions : initialMapOptions"
@@ -308,7 +307,7 @@
                         What causes Solar Eclipses?
                       </summary>
                       <p>
-                        A solar eclipse happens when the Moon passes between the Earth and the Sun and blocks the Sun from our view. Partial eclipses occur about every 6 months, somewhere on the Earth. The U.S. is lucky to be in the path of the next two solar eclipses. 
+                        A solar eclipse happens when the Moon passes between the Earth and the Sun and blocks the Sun from our view. Partial eclipses occur about every 6 months, somewhere on the Earth. In 2023 and 2024, the US has been lucky to be in the path of two solar eclipses.
                       </p>
                     </details>
                     
@@ -586,9 +585,15 @@
               </v-row>
               <div id="text-credits">
                 <h3>Credits:</h3>
+                <p class="mt-2">Atmospheric Physicist <a href="https://www.cfa.harvard.edu/people/caroline-nowlan" target="_blank" rel="noopener noreferrer">Caroline Nowlan</a> provided valuable guidance on interpreting the <a href="https://neo.gsfc.nasa.gov/view.php?datasetId=MYDAL2_E_CLD_FR&date=2023-04-07"  target="_blank" rel="noopener noreferrer">MODIS Cloud Cover</a> data.</p> 
 
-                <p class="mt-2">This Cosmic Data Story is powered by WorldWide Telescope (WWT).</p>              
-                <p class="my-3">Image of Sun is courtesy of NASA/SDO and the AIA, EVE, and HMI science teams.</p>
+                <p class="mt-3">The path of totality data are from <a href="https://svs.gsfc.nasa.gov/5123" target="_blank" rel="noopener noreferrer">NASA's Science Visualization Studio</a>.</p>
+
+                <p class="mt-3">Eclipse Timing Predictions are by <a href="https://eclipse.gsfc.nasa.gov/JSEX/JSEX-NA.html" target="_blank" rel="noopener noreferrer">Fred Espenak and Chris O'Byrne</a> (NASA's GSFC). <em>Adapted for TypeScript by CosmicDS Team</em></p>
+            
+                <p class="mt-3">Image of Sun is courtesy of NASA/SDO and the AIA, EVE, and HMI science teams.</p>
+
+                <p class="my-3">This Cosmic Data Story is powered by WorldWide Telescope (WWT).</p>  
 
                 <h4><a href="https://www.cosmicds.cfa.harvard.edu/" target="_blank" rel="noopener noreferrer">CosmicDS</a> Team:</h4> 
                 
@@ -619,7 +624,7 @@
 
   <div
     id="main-content"
-  >
+  > 
     <WorldWideTelescope
       :wwt-namespace="wwtNamespace"
       @pointerdown="onPointerDown"
@@ -674,7 +679,6 @@
               latitudeDeg: loc.latitude, 
               longitudeDeg: loc.longitude
             };
-            selectedLocation = 'My Location';
             locationDeg = myLocation;
             showMyLocationDialog = false;
             }"
@@ -846,7 +850,7 @@
               A lucky segment of Mexico, the U.S., and Canada will witness an awe-inspiring <b>total eclipse</b>. Other parts of North America will still see a <em>partial</em> eclipse, where the Moon blocks out some, but not all of the Sun's light.
               </p>
               <p class="mb-5">
-              See what the eclipse will look like where you are, and what the historical cloud coverage has been on April 8th from 2001&#8211;2023.
+              See what the eclipse will look like where you are, and what the historical cloud coverage has been during the week of April 8th from 2003&#8211;2023.
               </p>
             </div>
           </v-window-item>
@@ -868,7 +872,7 @@
                   <template v-slot:prepend>
                     <font-awesome-icon icon="cloud-sun" size="xl" class="bullet-icon"></font-awesome-icon>
                   </template>
-                    <strong>View historical cloud data</strong> for April 8th from 2001&#8211;2023.
+                    <strong>View historical cloud data</strong> for the week of April 8th from 2003&#8211;2023.
                 </v-list-item>
                 <v-list-item density="compact">
                   <template v-slot:prepend>
@@ -950,6 +954,7 @@
         </div>
       </div>
     </v-dialog>
+    
   
   <div id="top-wwt-content">
     <!-- <p> in total eclipse {{ locationInTotality }}</p> -->
@@ -1092,6 +1097,21 @@
           <div style="position: relative">
             <div id="speed-control">
               <icon-button
+                id="reverse-speed"
+                :fa-icon="'angles-left'"
+                @activate="() => {
+                      decreasePlaybackRate();
+                      // playing = true;
+                    }"
+                :color="accentColor"
+                :focus-color="accentColor"
+                :tooltip-text="playbackRate < 0 ? 'Reverse Faster' : 'Reverse'"
+                tooltip-location="top"
+                tooltip-offset="5px"
+                faSize="1x"
+                :show-tooltip="!mobile"
+              ></icon-button>
+              <icon-button
                 id="play-pause-icon"
                 :fa-icon="!(playing) ? 'play' : 'pause'"
                 @activate="() => {
@@ -1100,6 +1120,21 @@
                 :color="accentColor"
                 :focus-color="accentColor"
                 tooltip-text="Play/Pause"
+                tooltip-location="top"
+                tooltip-offset="5px"
+                faSize="1x"
+                :show-tooltip="!mobile"
+              ></icon-button>
+              <icon-button
+                id="forward-speed"
+                :fa-icon="'angles-right'"
+                @activate="() => {
+                      increasePlaybackRate();
+                      // playing = true;
+                    }"
+                :color="accentColor"
+                :focus-color="accentColor"
+                :tooltip-text="playbackRate > 0 ? 'Faster' : 'Forward'"
                 tooltip-location="top"
                 tooltip-offset="5px"
                 faSize="1x"
@@ -1128,53 +1163,111 @@
               </template>
             </icon-button>
               <icon-button
-                id="speed-down"
-                :fa-icon="'angle-double-down'"
-                @activate="() => {
-                      playbackRate = playbackRate / 10
-                      playing = true;
-                    }"
-                :color="accentColor"
-                :focus-color="accentColor"
-                tooltip-text="10x slower"
-                tooltip-location="top"
-                tooltip-offset="5px"
-                faSize="1x"
-                :show-tooltip="!mobile"
-              ></icon-button>
-              <icon-button
-                id="speed-up"
-                :fa-icon="'angle-double-up'"
-                @activate="() => {
-                      playbackRate = playbackRate * 10;
-                      playing = true;
-                    }"
-                :color="accentColor"
-                :focus-color="accentColor"
-                tooltip-text="10x faster"
-                tooltip-location="top"
-                tooltip-offset="5px"
-                faSize="1x"
-                :show-tooltip="!mobile"
-              ></icon-button>
-              <icon-button
                 id="reset"
                 :fa-icon="'rotate'"
                 @activate="() => {
-                      const _totalEclipseTimeUTC = new Date('2024-04-08T18:18:00Z');
-                    selectedTime = _totalEclipseTimeUTC.getTime() - 60*60*1000*1.5;
-                      playbackRate = 100;
-                      playing = false;
-                      toggleTrackSun = true;
-                    }"
+                  selectedTime = (new Date('2024-04-08T18:18:00Z')).getTime() - 60*60*1000*1.5;
+                  playbackRate = 100;
+                  playing = false;
+                  toggleTrackSun = true;
+                  forceRate = false;
+                }"
                 :color="accentColor"
                 :focus-color="accentColor"
+                border="none"
                 tooltip-text="Reset"
                 tooltip-location="top"
                 tooltip-offset="5px"
                 faSize="1x"
                 :show-tooltip="!mobile"
               ></icon-button>
+                    
+              <v-dialog 
+                v-if="!xSmallSize" 
+                v-model="playbackVisible" 
+                :scrim="false"
+                location="top"
+                offset="40"
+                location-strategy="connected"
+                persistent
+                no-click-animation
+                >
+                <template v-slot:activator="{ props }">
+                  <icon-button
+                    id="speed-control-icon"
+                    @activate="() => {
+                      playbackVisible = !playbackVisible;
+                    }"
+                    :fa-icon="playbackVisible ? 'times' : 'gauge-high'"
+                    :color="accentColor"
+                    :focus-color="accentColor"
+                    tooltip-text="Time Controls"
+                    tooltip-location="top"
+                    tooltip-offset="5px"
+                    faSize="1x"
+                    :show-tooltip="!mobile"
+                    v-bind="props"
+                  ></icon-button>
+                </template>
+                    <playback-control
+                    class="desktop-playback-control"
+                      v-if="playbackVisible"
+                      :model-value="playbackRate"
+                      @update:modelValue="(value: number) => {
+                        forceRate = false;
+                        playbackRate = value;
+                      }"
+                      :paused="!playing"
+                      @paused="playing = !$event"
+                      :max-power="3"
+                      :max="Math.log10(1000) + 1"
+                      :color="accentColor"
+                      :inline="false"
+                      show-close-button
+                      @close="() => {
+                        playbackVisible = false;
+                      }"
+                    /> 
+              </v-dialog>
+      
+
+                <div v-if="xSmallSize" id="inline-speed-control">
+                  <icon-button
+                    id="speed-control-icon"
+                    @activate="() => {
+                      playbackVisible = !playbackVisible;
+                    }"
+                    :fa-icon="playbackVisible ? 'times' : 'gauge-high'"
+                    :color="accentColor"
+                    :focus-color="accentColor"
+                    tooltip-text="Time Controls"
+                    tooltip-location="top"
+                    tooltip-offset="5px"
+                    faSize="1x"
+                    :show-tooltip="!mobile"
+                  ></icon-button>
+
+                    <playback-control
+                      class="mobile-playback-control"
+                      v-show="playbackVisible"
+                      :model-value="playbackRate"
+                      @update:modelValue="(value: number) => {
+                        forceRate = false;
+                        playbackRate = value;
+                      }"
+                      :paused="!playing"
+                      @paused="playing = !$event"
+                      :max-power="3"
+                      :max="Math.log10(1000) + 1"
+                      :color="accentColor"
+                      :inline="true"
+                      inline-button
+                      @close="() => {
+                        playbackVisible = false;
+                      }"
+                    /> 
+
+                </div>
             </div>
             <div id="speed-text">
               Time rate: 
@@ -1182,10 +1275,13 @@
                 Real time
               </span>
               <span v-if="playbackRate!=1 && playing">
-                {{ playbackRate }}&times;
+                {{ niceRound(playbackRate) }}&times;
               </span>
               <span v-if="!playing">
-                ({{ playbackRate }}&times;) Paused
+                ({{ niceRound(playbackRate) }}&times;) Paused
+              </span>
+              <span v-if="playing && forceRate">
+                (Slowed for totality)
               </span>
             </div>
           </div>
@@ -1281,7 +1377,7 @@
 
 <script lang="ts">
 import { defineComponent, toRaw, PropType } from "vue";
-import { MiniDSBase, BackgroundImageset, skyBackgroundImagesets, MINIDS_BASE_URL } from "@cosmicds/vue-toolkit";
+import { MiniDSBase, BackgroundImageset, skyBackgroundImagesets, API_BASE_URL } from "@cosmicds/vue-toolkit";
 import { GotoRADecZoomParams } from "@wwtelescope/engine-pinia";
 import { Classification, SolarSystemObjects } from "@wwtelescope/engine-types";
 import { Folder, Grids, LayerManager, Planets, Poly, Settings, WWTControl, Place, Texture, CAAMoon } from "@wwtelescope/engine";
@@ -1379,17 +1475,10 @@ while (t <= maxTime) {
   t += MILLISECONDS_PER_INTERVAL;
 }
 
-// const options = { timeout: 10000, enableHighAccuracy: true };
-
 type LocationRad = {
   longitudeRad: number;
   latitudeRad: number;
 };
-
-interface EclipseLocation extends LocationRad {
-  name: string;
-  eclipseFraction: number | null;
-}
 
 type LocationDeg = {
   longitudeDeg: number;
@@ -1414,11 +1503,8 @@ type OptionalFieldsShallow<T> = {
 type QueryData = OptionalFieldsShallow<LocationDeg & { splash: boolean }>;
 
 let queryData: QueryData = {};
-const USER_SELECTED = "User Selected" as const;
 const UUID_KEY = "eclipse-mini-uuid" as const;
 const OPT_OUT_KEY = "eclipse-mini-optout" as const;
-const USER_SELECTED_LOCATIONS_KEY = "user-selected-locations" as const;
-const PRESET_LOCATIONS_KEY = "preset-locations" as const;
 
 const RELEVANT_FEATURE_TYPES = ["postcode", "place", "region", "country"];
 const NA_COUNTRIES = ["United States", "Canada", "Mexico"];
@@ -1492,27 +1578,6 @@ function parseEclipsePath(csv: string) {
 
 const eclipsePath = parseEclipsePath(eclipse);
 
-// convert the eclipse path to a GeoJson feature collection
-const _eclipsePathGeoJson = {
-  "name": "Eclipse Path",
-  "type": "FeatureCollection",
-  "features": eclipsePath.map((d) => {
-    return {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [d.centerLine.longitudeDeg, d.centerLine.latitudeDeg]
-      },
-      "properties": {
-        "utc": d.utc,
-        "eclipseDuration": d.eclipseDuration,
-        "popupContent": d.popupContent,
-        // "absoluteRadius": 5000, //d.pathWidth * 1000 / 2
-      }
-    };
-  })
-};
-
 
 /** PARSE CLOUD COVERAGE DATA **/
 //import cloudCover from "./assets/cloud_cover.csv";
@@ -1541,9 +1606,8 @@ const ninoData  = csvParseRows(jackData, (d, _i) => {
 });
 
 // lon and lat are first col and row (dropping the first value)
-//const minLat = Math.min(...ninoData.map(d => d.lat).slice(1));
-// Access the lon property in each object of ninoData
-//const minLon = Math.min(...ninoData.map(d => d.lon).slice(1));
+const minLat = Math.min(...cloudData.map(d => d[0]).slice(1));
+const minLon = Math.min(...cloudData[0].slice(1));
 // get just the inner data grid
 // const jackData = jackData.slice(1).map(row => row.slice(1));
 
@@ -1594,8 +1658,7 @@ export default defineComponent({
       initialZoom: 3.3
     };
 
-    const selections = window.localStorage.getItem(USER_SELECTED_LOCATIONS_KEY);
-    const userSelectedLocationsVisited: [number, number][] = selections ? (this.parseJSONString(selections) ?? []) : [];
+    const userSelectedLocationsVisited: [number, number][] = [];
     const [latitudeDeg, longitudeDeg] = [queryData.latitudeDeg, queryData.longitudeDeg];
     
     let initialMapOptions = initialView;
@@ -1607,13 +1670,12 @@ export default defineComponent({
       };
     }
 
-    const presets = window.localStorage.getItem(PRESET_LOCATIONS_KEY);
-    const presetLocationsVisited: string[] = presets ? (this.parseJSONString(presets) ?? []) : [];
-    const selectedLocation = queryData ? USER_SELECTED : "Greatest Eclipse";
-    presetLocationsVisited.push(selectedLocation);
-
-    const uuid = window.localStorage.getItem(UUID_KEY) ?? v4();
-    window.localStorage.setItem(UUID_KEY, uuid);
+    const maybeUUID = window.localStorage.getItem(UUID_KEY);
+    const existingUser = maybeUUID !== null;
+    const uuid = maybeUUID ?? v4();
+    if (!existingUser) {
+      window.localStorage.setItem(UUID_KEY, uuid);
+    }
 
     const storedOptOut = window.localStorage.getItem(OPT_OUT_KEY);
     const responseOptOut = typeof storedOptOut === "string" ? storedOptOut === "true" : null;
@@ -1625,6 +1687,9 @@ export default defineComponent({
       cloudCoverData:   null as CloudCoverData | null,
       
       uuid,
+      infoTimeMs: 0,
+      appStartTimestamp: Date.now(),
+      infoStartTimestamp: null as number | null,
       responseOptOut: responseOptOut as boolean | null,
 
       showSplashScreen: queryData.splash ?? true, 
@@ -1655,7 +1720,6 @@ export default defineComponent({
       selectedTime:  _totalEclipseTimeUTC.getTime() - 60*60*1000*1.5,
       selectedTimezone: "America/Mexico_City",
       location,
-      selectedLocation,
       selectedLocationText: "Nazas, DUR",
       locationErrorMessage: "",
       
@@ -1683,119 +1747,8 @@ export default defineComponent({
       },
       
       eclipseCenterLine: eclipsePath,
-
-      eclipsePathLocations: {
-        // locations taken from https://science.nasa.gov/eclipses/future-eclipses/eclipse-2024/where-when/
-        "Greatest Eclipse": {
-          name: "Greatest Eclipse",
-          latitudeRad: D2R * 25.2866667,
-          longitudeRad: D2R * -104.1383333,
-          eclipseFraction: 1
-        },
-
-        // "Place": {
-        //   name: "Place",
-        //   latitudeRad: D2R * latitude,
-        //   longitudeRad: D2R * longitude,
-        //   eclipseFraction: 1.0
-        // },
-        
-        "Dallas, Texas":{
-          name: "Dallas, Texas",
-          latitudeRad: D2R * 32.7767,
-          longitudeRad: D2R * -96.7970,
-          eclipseFraction: 1.0
-        },
-        
-        "Idabel, OK": {
-          name: "Idabel, OK",
-          latitudeRad: D2R * 33.8959,
-          longitudeRad: D2R * -94.8261,
-          eclipseFraction: 1.0
-        },
-        
-        "Little Rock, AR": {
-          name: "Little Rock, AR",
-          latitudeRad: D2R * 34.7465,
-          longitudeRad: D2R * -92.2896,
-          eclipseFraction: 0.99 // appears to be total but too far south for WWT to do the eclipse doohickey
-        },
-        
-        "Poplar Bluff, MO": {
-          name: "Poplar Bluff, MO",
-          latitudeRad: D2R * 36.7570,
-          longitudeRad: D2R * -90.3929,
-          eclipseFraction: 1.0
-        },
-        
-        "Paducah, KY": {
-          name: "Paducah, KY",
-          latitudeRad: D2R * 37.0834,
-          longitudeRad: D2R * -88.6000,
-          eclipseFraction: .99 // appears to be total but too far south for WWT to do the eclipse doohickey
-        },
-        
-        "Evansville, IN": {
-          name: "Evansville, IN",
-          latitudeRad: D2R * 37.9716,
-          longitudeRad: D2R * -87.5711,
-          eclipseFraction: 1.0
-        },
-        
-        "Cleveland, OH": {
-          name: "Cleveland, OH",
-          latitudeRad: D2R * 41.4993,
-          longitudeRad: D2R * -81.6944,
-          eclipseFraction: 1.0
-        },
-        
-        "Erie, PA": {
-          name: "Erie, PA",
-          latitudeRad: D2R * 42.1292,
-          longitudeRad: D2R * -80.0851,
-          eclipseFraction: 1.0
-        },
-        
-        "Buffalo, NY": {
-          name: "Buffalo, NY",
-          latitudeRad: D2R * 42.8864,
-          longitudeRad: D2R * -78.8784,
-          eclipseFraction: 1.0
-        },
-        
-        "Burlington, VT": {
-          name: "Burlington, VT",
-          latitudeRad: D2R * 44.4759,
-          longitudeRad: D2R * -73.2121,
-          eclipseFraction: 1.0
-        },
-        
-        "Lancaster, NH": {
-          name: "Lancaster, NH",
-          latitudeRad: D2R * 44.4872,
-          longitudeRad: D2R * -71.5692,
-          eclipseFraction: 0.99
-        }, // appears to be total but too far south for WWT to do the eclipse doohickey
-        
-        "Cariibou, ME": {
-          name: "Cariibou, ME",
-          latitudeRad: D2R * 46.8600,
-          longitudeRad: D2R * -68.0111,
-          eclipseFraction: 1.0
-        },
-        
-        [USER_SELECTED]: { // by default, user selected is Greatest Eclipse
-          name: USER_SELECTED,
-          latitudeRad: D2R * 25.2866667,
-          longitudeRad: D2R * -104.1383333,
-          eclipseFraction: 1.0
-        }
-      } as Record<string, EclipseLocation>,
-
       currentFractionEclipsed: 0,
 
-      places: [] as (LocationRad & { name: string })[],
-        
       placeCircleOptions: {
         color: "#0000FF",
         fillColor: "#0000FF",
@@ -1860,6 +1813,8 @@ export default defineComponent({
       moonTexture: 'moon-sky-blue-overlay.png' as MoonImageFile,
 
       playbackRateValue: 1,
+      forceRate: false,
+      playbackVisible: false,
       
       horizonRate: 100, 
       scopeRate: 100, 
@@ -1888,12 +1843,13 @@ export default defineComponent({
       ],
       
 
-      presetLocationsVisited,
-      userSelectedLocationsVisited,
+      userSelectedLocations: userSelectedLocationsVisited,
+      cloudCoverSelectedLocations: [] as [number, number][],
       eclipsePrediction: null as EclipseData<Date> | null,
       eclipseStart: 0 as number | null,
       eclipseMid: 0 as number | null,
       eclipseEnd: 0 as number | null,
+      eclipseApproach: 'entering' as 'entering' | 'leaving',
     };
   },
 
@@ -1910,23 +1866,11 @@ export default defineComponent({
     queryData.splash = splashQuery !== "false";
   },
 
-  created() {
-    this.places = Object.entries(this.eclipsePathLocations).filter(([key, _]) => key !== USER_SELECTED)
-      .sort(([_, pl1], [__, pl2]) => pl1.longitudeRad - pl2.longitudeRad)
-      .map(([_, pl]) => {
-        return {
-          ...pl,
-          latitudeDeg: R2D * pl.latitudeRad,
-          longitudeDeg: R2D * pl.longitudeRad
-        };
-      });
-  },
-
   mounted() {
+    
     if (queryData.latitudeDeg !== undefined && queryData.longitudeDeg !== undefined) {
       this.updateSelectedLocationText();
     }
-    this.loadCloudCover();
     this.waitForReady().then(async () => {
 
       this.backgroundImagesets = [...skyBackgroundImagesets];
@@ -2019,6 +1963,14 @@ export default defineComponent({
         }
       });
 
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          this.sendUpdateData();
+        } else {
+          this.clearData();
+        }
+      });
+
     });
 
     this.$nextTick(() => {
@@ -2070,7 +2022,7 @@ export default defineComponent({
     
     selectedLocaledTimeDateString() {
       if (this.smallSize) {
-        return formatInTimeZone(this.dateTime, this.selectedTimezone, 'MM/dd, HH:mm');
+        return formatInTimeZone(this.dateTime, this.selectedTimezone, 'MM/dd, HH:mm:ss');
       } else {
         return formatInTimeZone(this.dateTime, this.selectedTimezone, 'MM/dd/yyyy HH:mm:ss (zzz)');
       }
@@ -2169,7 +2121,7 @@ export default defineComponent({
       return {
         '--accent-color': this.accentColor,
         '--sky-color': this.skyColorLight,
-        '--app-content-height': this.showInfoSheet ? '100%' : '100%',
+        '--app-content-height': this.showInfoSheet ? '100vh' : '100vh',
         '--top-content-height': this.showGuidedContent? this.guidedContentHeight : this.guidedContentHeight,
         '--moon-color': this.moonColor,
       };
@@ -2316,30 +2268,43 @@ export default defineComponent({
       }
     },
     
+    // before during or after the eclipse
+    eclipsePhase(): 'before' | 'during' | 'after' | null {
+      if (this.eclipsePrediction && this.eclipseStart != null && this.eclipseEnd != null) {
+        if (this.wwtCurrentTime.getTime() < this.eclipseStart) {
+          return 'before';
+        } else if (this.wwtCurrentTime.getTime() > this.eclipseEnd) {
+          return 'after';
+        } else {
+          return 'during';
+        }
+      } else {
+        return null;
+      }
+    },
+    
+    nearTotality(): boolean {
+      let nearEclipseMax = false;
+      if (this.eclipsePrediction) {
+        if (this.eclipsePrediction.maxTime[0]) {
+          nearEclipseMax = Math.abs(this.eclipsePrediction.maxTime[0].getTime() - this.wwtCurrentTime.getTime()) < 120_000;
+        }
+      }
+
+      // if the eclipse prediction isn't available fallback on the current fraction eclipsed
+      return this.locationInTotality && (nearEclipseMax || this.currentFractionEclipsed > .99);
+    },
+    
     playbackRate: {
       set(value: number) {
-        this.playbackRateValue = value;
+        this.playbackRateValue = Math.sign(value) * Math.min(Math.abs(value), 5000);
       },
       get(): number {
-        let rate = this.playbackRateValue;
-        
-        // max rate = 100 if eclipsed
-        // if (this.currentFractionEclipsed > .5) {
-        //   rate = Math.min(this.playbackRateValue, 100);
-        // }
-        
-        // max rate = 10 if near eclipse max
-        let nearEclipseMax = false;
-        if (this.eclipsePrediction) {
-          if (this.eclipsePrediction.maxTime[0]) {
-            nearEclipseMax = Math.abs(this.eclipsePrediction.maxTime[0].getTime() - this.wwtCurrentTime.getTime()) < 120_000;
-          }
-        }
-        // if the eclipse prediction isn't available fallback on the current fraction eclipsed
-        if (this.locationInTotality && (nearEclipseMax || this.currentFractionEclipsed > .99)) {
-          rate = Math.min(this.playbackRateValue, 10);
-        }
-        return rate;
+        if (this.forceRate) {
+          const sign = Math.sign(this.playbackRateValue);
+          return sign * Math.min(10, sign * this.playbackRateValue);
+        } 
+        return this.playbackRateValue;        
       }
     },
     
@@ -2466,7 +2431,7 @@ export default defineComponent({
       }
       const n = 20;
       for (let i=n; i >= 0; i--) {
-        const cc = i/n > .05 ? .2 + Math.pow(i/n,1.5) * .8 : i/n;
+        const cc = this.sigmoid(i/n);
         const color = `hsl(0, 0%, 100%, ${.9 * cc*100}%)`;
         const div = document.createElement('div');
         div.style.backgroundColor = color;
@@ -2475,6 +2440,16 @@ export default defineComponent({
       }
       
       
+    },
+    
+    sigmoid(val: number | null): number {
+      if (val === null) {
+        return 0;
+      }
+      // return sigmoid
+      const y = (val - 0.5) / .12;
+      const z = Math.exp(y);
+      return z / (1 + z);
     },
     
     async trackSun(): Promise<void> {
@@ -2621,7 +2596,13 @@ export default defineComponent({
           forceTotality = true;
         }
       } else {
-        this.currentFractionEclipsed = isNaN(fractionEclipsed) ? 1 : Math.max(Math.min(fractionEclipsed, 1), 0);
+        const cfe = isNaN(fractionEclipsed) ? 1 : Math.max(Math.min(fractionEclipsed, 1), 0);
+        if (cfe == 1) {
+          // force a lower value to hide corona
+          this.currentFractionEclipsed = .999;
+        } else {
+          this.currentFractionEclipsed = cfe;
+        }
       }
 
       // If we're using the regular WWT moon, or in sun scope mode, we don't want the overlay but did want the percentage eclipsed
@@ -2872,46 +2853,11 @@ export default defineComponent({
       this.wwtSettings.set_locationLng(R2D * this.location.longitudeRad);
     },
 
-    updateLocation(location: string) {
-      if (location == null) {
-        return;
-      }
-      // console.log("updateLocation", location);
-      this.selectedLocation = location;
-      this.location = {
-        latitudeRad: this.eclipsePathLocations[location].latitudeRad,
-        longitudeRad: this.eclipsePathLocations[location].longitudeRad
-      };
-
-    },
-
     updateLocationFromMap(location: LocationDeg) {
       if (location == null) {
         return;
       }
-      // console.log("updateLocationFromMap", location);
-      this.selectedLocation = USER_SELECTED;
       this.locationDeg = location;
-
-      this.eclipsePathLocations[USER_SELECTED] = {
-        name: `User Selected: ${location.latitudeDeg.toFixed(2)}, ${location.longitudeDeg.toFixed(2)}`,
-        latitudeRad: D2R * location.latitudeDeg,
-        longitudeRad: D2R * location.longitudeDeg,
-        eclipseFraction: null
-      };
-
-      const citySelector = this.$refs.citySelector;
-      // There's got to be a way to export the component data/method definitions
-      // but that's a problem for another day
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      citySelector?.onMapSelect({
-        latlng: {
-          lat: location.latitudeDeg,
-          lng: location.latitudeDeg
-        }
-      });
-
     },
 
     onTimeSliderChange() {
@@ -2920,11 +2866,21 @@ export default defineComponent({
       });
     },
 
-    sendDataToDatabase() {
+    async createUserEntry() {
       if (this.responseOptOut) {
         return;
       }
-      fetch(`${MINIDS_BASE_URL}/solar-eclipse-2024/response`, {
+      const response = await fetch(`${API_BASE_URL}/solar-eclipse-2024/data/${this.uuid}`, {
+        method: "GET",
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        headers: { "Authorization": process.env.VUE_APP_CDS_API_KEY ?? "" }
+      });
+      const content = await response.json();
+      const exists = response.status === 200 && content.response.user_uuid != undefined;
+      if (exists) {
+        return;
+      }
+      fetch(`${API_BASE_URL}/solar-eclipse-2024/data`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -2935,8 +2891,44 @@ export default defineComponent({
           // eslint-disable-next-line @typescript-eslint/naming-convention
           user_uuid: this.uuid, 
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          preset_locations: toRaw(this.presetLocationsVisited), user_selected_locations: toRaw(this.userSelectedLocationsVisited)
+          user_selected_locations: toRaw(this.userSelectedLocations),
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          cloud_cover_selected_locations: toRaw(this.cloudCoverSelectedLocations),
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          info_time_ms: 0, app_time_ms: 0,
         })
+      });
+    },
+
+    clearData() {
+      this.userSelectedLocations = [];
+      this.cloudCoverSelectedLocations = [];
+      this.infoTimeMs = 0;
+      this.appStartTimestamp = Date.now();
+    },
+
+    sendUpdateData() {
+      if (this.responseOptOut) {
+        return;
+      }
+      fetch(`${API_BASE_URL}/solar-eclipse-2024/data/${this.uuid}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          "Authorization": process.env.VUE_APP_CDS_API_KEY ?? ""
+        },
+        body: JSON.stringify({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          user_selected_locations: toRaw(this.userSelectedLocations),
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          cloud_cover_selected_locations: toRaw(this.cloudCoverSelectedLocations),
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          delta_info_time_ms: this.infoTimeMs, delta_app_time_ms: Date.now() - this.appStartTimestamp
+        }),
+        keepalive: true,
+      }).then(() => {
+        this.clearData();
       });
     },
 
@@ -3312,7 +3304,11 @@ export default defineComponent({
       const sunAlt = altRad;
       let dssOpacity = 0;
       this.skyOpacity = (1 + Math.atan(Math.PI * sunAlt / (-astronomicalTwilight))) / 2;
-      this.skyOpacity = this.skyOpacity * (1 - 0.5 * Math.pow(Math.E,-Math.pow((this.currentFractionEclipsed -1),2)/(0.001)));
+      let frac = this.currentFractionEclipsed;
+      if (this.locationInTotality && !this.inEclipse) {
+        frac = frac > 0.98 ? 0.98 : frac;
+      }
+      this.skyOpacity = this.skyOpacity * (1 - 0.5 * Math.pow(Math.E,-Math.pow((frac -1),2)/(0.001)));
       dssOpacity = sunAlt > 0 ? 0 : 1 - (1 + Math.atan(Math.PI * sunAlt / (-astronomicalTwilight))) / 2;
     
       this.updateMoonTexture();
@@ -3354,15 +3350,15 @@ export default defineComponent({
       }
     },
     
-    //    getCloudCover(lat: number, lon: number): number | null {
-    //      // convert lat/lon to row/col
-    //      const row = Math.floor(lat + 0.5 - minLat);
-    //      const col = Math.floor(lon + 0.5 - minLon);
-    //      if (row < 0 || row >= cloudData.length || col < 0 || col >= cloudData[0].length) {
-    //        return null;
-    //      }
-    //      return cloudData[row][col];
-    //    },
+    getCloudCover(lat: number, lon: number): number | null {
+      // convert lat/lon to row/col
+      const row = Math.floor(lat + 0.5 - minLat);
+      const col = Math.floor(lon + 0.5 - minLon);
+      if (row < 0 || row >= cloudData.length || col < 0 || col >= cloudData[0].length) {
+        return null;
+      }
+      return cloudData[row][col];
+    },
     
     getEclipsePrediction() {
       const eclipsePrediction = recalculateForObserverUTC(this.locationDeg.latitudeDeg, this.locationDeg.longitudeDeg, 100);
@@ -3445,9 +3441,56 @@ export default defineComponent({
         return `${lat}° ${ns}, ${lon}° ${ew}`;
       }
     },
+    
+    decreasePlaybackRate() {
+      this.forceRate = false;
+      const sign = Math.sign(this.playbackRate);
+      if (sign > 0 ) {
+        this.playbackRate = -Math.min(this.playbackRate,100);
+        return;
+      }
+      const abs = Math.abs(this.playbackRate);
+      let ezrate = Math.floor(Math.log10(abs));
+      ezrate -= sign * 1;
+      this.playbackRate = sign * Math.pow(10, Math.abs(ezrate));
+    },
+    
+    increasePlaybackRate() {
+      this.forceRate = false;
+      if (Math.sign(this.playbackRate) < 0 ) {
+        this.playbackRate = -Math.max(this.playbackRate,-100);
+        return;
+      }
+      const sign = Math.sign(this.playbackRate);
+      const abs = Math.abs(this.playbackRate);
+      let ezrate = Math.floor(Math.log10(abs));
+      ezrate += sign * 1;
+      this.playbackRate = sign * Math.pow(10, Math.abs(ezrate));
+    },
+    
+    
 
     async updateSelectedLocationText() {
       this.selectedLocationText = await this.textForLocation(this.locationDeg.longitudeDeg, this.locationDeg.latitudeDeg);
+    },
+    
+    niceRound(val: number) {
+      // rounding routine specifically for the playback rate
+      const abs = Math.abs(val);
+      
+      if (abs < 2.7) {
+        return val.toFixed(1);
+      }
+      
+      if (abs < 35) {
+        return val.toFixed(0);
+      }
+      
+      if (abs < 255) {
+        return Math.round(val / 10) * 10;
+      }
+      
+      return Math.round(val / 100) * 100;
     }
   },
 
@@ -3521,22 +3564,36 @@ export default defineComponent({
     selectedTime(_time: number) {
       return;
     },
+    
+    nearTotality(near: boolean, oldNear: boolean) {
+      if (near) {
+        this.forceRate =  (Math.abs(this.playbackRate) > 10) && this.playing;
+      }
+      
+      // if leaving eclipse reset speed to previous
+      if (oldNear && !near) {
+        this.forceRate = false;
+      }
+    },
+
 
     wwtCurrentTime(time: Date) {
+      
+      if (this.forceRate && !this.nearTotality && (this.eclipsePhase === 'after' || this.eclipsePhase === 'before')) {
+        this.forceRate = false;
+      }
 
       if (time.getTime() >= this.maxTime || time.getTime() < this.minTime) {
         if (this.playing) {
           this.playing = false;
           this.selectedTime = this.minTime;
-          // setTimeout(() => {
-          //   this.playing = true;
-          // }, 1000);
         }
         
         return;
       }
       this.updateFrontAnnotations(time);
     },
+
 
     location(loc: LocationRad, oldLoc: LocationRad) {
       const locationDeg: [number, number] = [R2D * loc.latitudeRad, R2D * loc.longitudeRad];
@@ -3566,34 +3623,38 @@ export default defineComponent({
     },
 
     locationDeg(loc: LocationDeg) {
-      if (this.selectedLocation === USER_SELECTED) {
-        this.userSelectedLocationsVisited.push([loc.latitudeDeg, loc.longitudeDeg]);
-        window.localStorage.setItem(USER_SELECTED_LOCATIONS_KEY, JSON.stringify(this.userSelectedLocationsVisited));
-        this.sendDataToDatabase();
+      const visitedLocation: [number, number] = [loc.latitudeDeg, loc.longitudeDeg];
+      if (this.learnerPath === "Clouds") {
+        this.cloudCoverSelectedLocations.push(visitedLocation);
+      } else {
+        this.userSelectedLocations.push(visitedLocation);
       }
-    },
-
-    selectedLocation(locname: string) {
-      if (!(locname in this.eclipsePathLocations)) {
-        // console.log(`location ${locname} not found in eclipsePathLocations`);
-        return;
-      }
-      if ((locname !== USER_SELECTED) && (locname !== 'My Location') ) {
-        this.presetLocationsVisited.push(locname);
-        window.localStorage.setItem(PRESET_LOCATIONS_KEY, JSON.stringify(this.presetLocationsVisited));
-        this.sendDataToDatabase();
-      }
-      // console.log("selected location", locname);
     },
 
     playing(play: boolean) {
       console.log(`${play ? 'Playing:' : 'Stopping:'} at ${this.playbackRate}x real time`);
       this.setClockSync(play);
+      
+      if (this.nearTotality && play) {
+        this.forceRate = (Math.abs(this.playbackRate) > 10);
+      }
+      
     },
 
     showSplashScreen(val: boolean) {
       if (!val) {
         this.inIntro = true; 
+      }
+    },
+
+    showInfoSheet(show: boolean) {
+      // Keep track of how long the user has the book open/closed
+      if (show) {
+        this.infoStartTimestamp = Date.now();
+      } else if (this.infoStartTimestamp !== null) {
+        const timestamp = Date.now();
+        this.infoTimeMs += (timestamp - this.infoStartTimestamp);
+        this.infoStartTimestamp = null;
       }
     },
     
@@ -3667,19 +3728,14 @@ export default defineComponent({
     },
     
     playbackRate(val: number) {
-      
-      if (val > 11_000) {
+      if (Math.abs(val) > 11_000) {
         console.warn('playbackRate too high, setting to maxPlaybackRate');
-        this.playbackRate = 10_000;
-      }
-
-      if (val < .1) {
-        console.warn('playbackRate too low, setting to minPlaybackRate');
-        this.playbackRate = .1;
+        this.playbackRate = Math.sign(val) * 10_000;
       }
       
-      this.setClockRate(val);
+      this.setClockRate(val === 1 ? 1 : val - 1 + 0.000000001 );
     },
+    
 
   },
 });
@@ -3763,6 +3819,16 @@ body {
   }
 }
 
+
+#test-content {
+  position: absolute;
+  width: 50%;
+  height: 60%;
+  padding: 1em;
+  top: 5%;
+  left: 5%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
 
 
 #app {
@@ -4020,7 +4086,7 @@ body {
   gap: 5px;
   pointer-events: auto;
   
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -5042,8 +5108,13 @@ video, #info-video {
 #speed-control {
   display: flex;
   flex-direction: row;
+  align-items: flex-end;
   gap: 5px;
   margin-left: 10px;
+  
+  @media (max-width: 370px) {
+    justify-content: center;
+  }
 
   .icon-wrapper {
     padding-inline: calc(0.3 * var(--default-line-height));
@@ -5051,6 +5122,52 @@ video, #info-video {
     border: 2px solid var(--accent-color);
   }
 
+}
+
+#enclosing-playback-container.desktop-playback-control {
+  --tick-font-size: 12px;
+  margin-bottom: calc(2.5rem + 5px);
+  padding-right: 1rem;
+  
+}
+
+#enclosing-playback-container.inset.mobile-playback-control {
+  padding-right: 1rem;
+}
+
+#enclosing-playback-container > #playback-play-pause-button {
+  pointer-events: auto!important;
+}
+
+#inline-speed-control {
+  display: flex; 
+  flex-grow:1; 
+  align-items: flex-end; 
+  position: relative; 
+  gap: 5px;
+  
+  // when the screen is small enough we want to hide the buttons in inline mode
+  @media (min-width: 369px) {
+    #enclosing-playback-container > #playback-play-pause-button {
+      display: none;
+    }
+    
+    #enclosing-playback-container > #playback-close-button {
+      display: none;
+    }
+  }
+  // when small enough we want to cover the controls
+  @media (max-width: 370px) {
+    // position: absolute;
+    flex-grow: 0;
+    #enclosing-playback-container.mobile-playback-control {
+      position: fixed;
+      width: calc(90% - 1rem);
+      left: 50%;
+      --off: calc(50% - 5px);
+      transform: translateX(-50%) translateY(var(--off)) !important;
+    }
+  }
 }
 
 #speed-text {
@@ -5061,13 +5178,14 @@ video, #info-video {
   border-radius: 0.3em;
   font-size: calc(1 * var(--default-font-size));
   text-wrap: nowrap;  
+  width: fit-content;
 
   left: calc(100% + 1rem);
   top: 1.5rem;
   
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     position: relative;
-    top: 0.5rem;
+    top: 3rem;
     left: 0.5rem;
     display: inline;
   }
@@ -5103,7 +5221,7 @@ video, #info-video {
     flex-wrap: column;
     gap:5px;
     
-    @media (max-width: 500px) {
+    @media (max-width: 600px) {
       flex-direction: column;
       align-items: flex-end;
     }
@@ -5195,9 +5313,9 @@ video, #info-video {
 
 #change-optout {
   
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     position: absolute;
-    bottom: 0.5rem;
+    bottom: -0.5rem ;
     right: 0.5rem;
   }
   
@@ -5269,5 +5387,22 @@ a {
     color: var(--accent-color);
   }
   
+}
+
+
+// this is class called blink that makes a span look like a round blinking circle period of 1 sec
+.blink {
+  animation: blinker 1s linear infinite;
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  background-color: #29ff29;
+  display: inline-block;
+}
+
+@keyframes blinker {
+  10% {
+    opacity: 0;
+  }
 }
 </style>

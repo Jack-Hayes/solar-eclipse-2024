@@ -168,21 +168,32 @@ export default defineComponent({
   },
 
   methods: {
-    
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    parseResult(result: CloudData[]) {
-      if (this.cloudCoverRectangles === null) {
-        return;
-      }
-      console.log('adding to map');
-      result.forEach((row: {'lat': number, 'lon': number, 'cloudCover': number}) => {
-        const lat = row.lat;
-        const lon = row.lon;
-        const cloudCover = row.cloudCover;
-        // check for nan
-        if (isNaN(lat) || isNaN(lon) || isNaN(cloudCover)) {
-          return;
-        }
+
+    async loadCloudCover(): Promise<void> {
+      return fetch('https://raw.githubusercontent.com/johnarban/solar-eclipse-2024-ds/use-median-cloud-cover/src/assets/one_deg_median_cc.csv')
+        .then(response => response.text())
+        .then(csvData => {
+          this.parseData(csvData);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    },
+
+    parseData(csvData: string) {
+      Papa.parse(csvData, {
+        header: true,
+        dynamicTyping: true,
+        complete: (result) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          result.data.forEach((row: any) => {
+            const lat = parseFloat(row.lat);
+            const lon = parseFloat(row.lon);
+            const cloudCover = parseFloat(row.cloud_cover);
+            // check for nan
+            if (isNaN(lat) || isNaN(lon) || isNaN(cloudCover)) {
+              return;
+            }
 
         const rect = this.createRectangle(lat, lon, cloudCover);
         if (rect) {
@@ -207,8 +218,18 @@ export default defineComponent({
         weight: .01,
         opacity: cloudCover,
         fillColor: color,
-        fillOpacity: cloudCover > .05 ? .2 + Math.pow(cloudCover,1.5) * .8 : cloudCover
+        fillOpacity: this.sigmoid(cloudCover)
       });
+    },
+    
+    sigmoid(val: number | null): number {
+      if (val === null) {
+        return 0;
+      }
+      // return sigmoid
+      const y = (val - 0.5) / .12;
+      const z = Math.exp(y);
+      return z / (1 + z);
     },
 
     getColor(_cloudCover:number) {
